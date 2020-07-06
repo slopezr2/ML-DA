@@ -2,17 +2,18 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from tensorflow.compat.v1.keras.models import Sequential
-from tensorflow.compat.v1.keras.layers import LSTM
-from tensorflow.compat.v1.keras.layers import Dense
-from tensorflow.compat.v1.keras.layers import RepeatVector
-from tensorflow.compat.v1.keras.layers import TimeDistributed
+from numpy import array
+from numpy import math
+import warnings
+
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import LSTM
 from keras.metrics import RootMeanSquaredError
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 from datetime import datetime
-
+warnings.filterwarnings('ignore')
 
 
 def create_dataset(dataset, look_back=1,step_forecast=1):
@@ -69,9 +70,9 @@ def to_supervised(train, n_input, n_out=24*3):
 
 
 ##===Load Data===
-SIATA_pm25=pd.read_csv('SIATA_pm25.csv')
-SIATA_Temperature=pd.read_csv('Meteo_SIATA_Temperature_total_V2.csv',delimiter=';')
-SIATA_Wind=pd.read_csv('Meteo_SIATA_Wind_total_V2.csv',delimiter=';')
+SIATA_pm25=pd.read_csv('../data/SIATA_pm25.csv')
+SIATA_Temperature=pd.read_csv('../data/Meteo_SIATA_Temperature_total_V2.csv', delimiter=';')
+SIATA_Wind=pd.read_csv('../data/Meteo_SIATA_Wind_total_V2.csv', delimiter=';')
 for i in range(0,len(SIATA_Temperature)):
     SIATA_Temperature.loc[i,'Date']=datetime(SIATA_Temperature.loc[i,'YEAR'],SIATA_Temperature.loc[i,'MONTH'],SIATA_Temperature.loc[i,'DAY'],SIATA_Temperature.loc[i,'HOUR'],0,0)
 
@@ -91,6 +92,8 @@ station=SIATA_pm25[SIATA_pm25['STATION'].values=='Station84']
 station['CONCENTRATION'].loc[station['CONCENTRATION']<0]=np.NaN
 station.reset_index(inplace=True)
 station['CONCENTRATION'].loc[np.isnan(station['CONCENTRATION'])]=np.nanmean(station['CONCENTRATION'])
+print("data lodaded")
+
 
 # choose a number of time steps 
 n_input_steps=7*2*24
@@ -124,7 +127,7 @@ in_seq1=scalerT.transform(in_seq1)
 in_seq2=scalerW.transform(in_seq2)
 in_seq3=scalerC.transform(in_seq3)
 out_seq=scalerC.transform(out_seq)
-
+print("data sacaled")
 # horizontally stack columns 
 dataset = np.hstack((in_seq1, in_seq2,in_seq3, out_seq)) 
 
@@ -150,16 +153,18 @@ model.add(LSTM(100))
 model.add(Dense(50, activation='relu' ))
 model.add(Dense(n_output_steps))
 model.compile(optimizer='adam', loss='mse',metrics=[RootMeanSquaredError()])
+print("model defined")
 # fit model
 model.fit(X, y, epochs=3, verbose=1, batch_size=32)
+print("model fit")
 # demonstrate prediction
 x_input = X[9500+1,:,:]
 x_input=x_input.reshape((1,x_input.shape[0],x_input.shape[1]))
 yhat = model.predict(x_input, verbose=1)
-
+print("predicted")
 y_real=y[9500+1,:]
 yhat =scalerC.inverse_transform(yhat)
-yreal =scalerC.inverse_transform(yreal)
+yreal =scalerC.inverse_transform(y_real)
 model.save('Models_save/LSTM_Vanilla_station82_Meteo')
 
 testScore = math.sqrt(mean_squared_error(y_real[:], yhat[0,:]))

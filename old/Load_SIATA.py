@@ -5,12 +5,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_pacf
 from statsmodels.graphics.tsaplots import plot_acf
-SIATA_pm25=pd.read_csv('SIATA_pm25.csv')
-SIATA_no2=pd.read_csv('SIATA_no2.csv')
-SIATA_pm10=pd.read_csv('SIATA_pm10.csv')
-SIATA_o3=pd.read_csv('SIATA_o3.csv')
-SIATA_so2=pd.read_csv('SIATA_so2.csv')
-SIATA_co=pd.read_csv('SIATA_co.csv')
+SIATA_pm25=pd.read_csv('../data/SIATA_pm25.csv')
+SIATA_no2=pd.read_csv('../data/SIATA_no2.csv')
+SIATA_pm10=pd.read_csv('../data/SIATA_pm10.csv')
+SIATA_o3=pd.read_csv('../data/SIATA_o3.csv')
+SIATA_so2=pd.read_csv('../data/SIATA_so2.csv')
+SIATA_co=pd.read_csv('../data/SIATA_co.csv')
 
 
 

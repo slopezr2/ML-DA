@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from statsmodels.graphics.tsaplots import plot_pacf
 from statsmodels.graphics.tsaplots import plot_acf
-SIATA_Temperature=pd.read_csv('Meteo_SIATA_Temperature_total_V2.csv',delimiter=';')
-SIATA_Wind=pd.read_csv('Meteo_SIATA_Wind_total_V2.csv',delimiter=';')
+SIATA_Temperature=pd.read_csv('../data/Meteo_SIATA_Temperature_total_V2.csv', delimiter=';')
+SIATA_Wind=pd.read_csv('../data/Meteo_SIATA_Wind_total_V2.csv', delimiter=';')
 for i in range(0,len(SIATA_Temperature)):
     SIATA_Temperature.loc[i,'Date']=datetime(SIATA_Temperature.loc[i,'YEAR'],SIATA_Temperature.loc[i,'MONTH'],SIATA_Temperature.loc[i,'DAY'],SIATA_Temperature.loc[i,'HOUR'],0,0)
 
