@@ -29,7 +29,7 @@ X = X.reshape((X.shape[0], X.shape[1],n_features))
 cnnSiata = CnnSiata(n_input_steps,n_features, n_output_steps)
 
 #Fit Model
-cnnSiata.model.fit(X, Y, epochs=5, verbose=1)
+cnnSiata.model.fit(X, Y, epochs=100, verbose=1)
 
 # demonstrate prediction
 x_input = datax[n_train+10, :]
