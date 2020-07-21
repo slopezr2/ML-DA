@@ -3,22 +3,17 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from tensorflow.compat.v1.keras.models import Sequential
-from tensorflow.compat.v1.keras.layers import LSTM
-from tensorflow.compat.v1.keras.layers import Dense
-from tensorflow.compat.v1.keras.layers import RepeatVector
-from tensorflow.compat.v1.keras.layers import TimeDistributed
-from keras.metrics import RootMeanSquaredError
+
+
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import mean_squared_error
 
 
-SIATA_pm25=pd.read_csv('SIATA_pm25.csv')
-SIATA_no2=pd.read_csv('SIATA_no2.csv')
-SIATA_pm10=pd.read_csv('SIATA_pm10.csv')
-SIATA_o3=pd.read_csv('SIATA_o3.csv')
-SIATA_so2=pd.read_csv('SIATA_so2.csv')
-SIATA_co=pd.read_csv('SIATA_co.csv')
+SIATA_pm25=pd.read_csv('../data/SIATA_pm25.csv')
+SIATA_no2=pd.read_csv('../data/SIATA_no2.csv')
+SIATA_pm10=pd.read_csv('../data/SIATA_pm10.csv')
+SIATA_o3=pd.read_csv('../data/SIATA_o3.csv')
+SIATA_so2=pd.read_csv('../data/SIATA_so2.csv')
+SIATA_co=pd.read_csv('../data/SIATA_co.csv')
 
 
 
