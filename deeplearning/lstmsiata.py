@@ -4,7 +4,7 @@ from tensorflow.keras.layers import LSTM
 from tensorflow.keras.layers import RepeatVector
 from tensorflow.keras.layers import TimeDistributed
 
-class CnnSiata:
+class LstSiata:
 
     def __init__(self, n_input_steps, n_features, n_output_steps):
         self.model = Sequential()

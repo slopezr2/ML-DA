@@ -24,21 +24,26 @@ class DataManager:
         self.SIATA_Temperature = pd.read_csv(path + 'Meteo_SIATA_Temperature_total_V2.csv', delimiter=';') if "temperature" in filter_items or len(filter_items) == 0 else None
         self.SIATA_Wind = pd.read_csv(path + 'Meteo_SIATA_Wind_total_V2.csv', delimiter=';') if "wind" in filter_items or len(filter_items) == 0 else None
         if (self.SIATA_Temperature is not None):
-            for i in range(0, len(self.SIATA_Temperature)):
-                self.SIATA_Temperature.loc[i, 'Date'] = datetime(self.SIATA_Temperature.loc[i, 'YEAR'],
-                                                                 self.SIATA_Temperature.loc[i, 'MONTH'],
-                                                                 self.SIATA_Temperature.loc[i, 'DAY'],
-                                                                 self.SIATA_Temperature.loc[i, 'HOUR'], 0, 0)
+            print("Total Temperature "+str(len(self.SIATA_Temperature)))
+            self.SIATA_Temperature['Date'] = pd.to_datetime(self.SIATA_Temperature[['YEAR', 'MONTH', 'DAY', 'HOUR']])
 
         if (self.SIATA_Wind is not None):
-            for i in range(0, len(self.SIATA_Wind)):
-                self.SIATA_Wind.loc[i, 'Date'] = datetime(self.SIATA_Wind.loc[i, 'YEAR'], self.SIATA_Wind.loc[i, 'MONTH'],
-                                                          self.SIATA_Wind.loc[i, 'DAY'], self.SIATA_Wind.loc[i, 'HOUR'], 0,
-                                                          0)
+            print("Total Wind " + str(len(self.SIATA_Wind)))
+            self.SIATA_Wind['Date'] = pd.to_datetime(self.SIATA_Wind[['YEAR', 'MONTH', 'DAY', 'HOUR']])
 
     def pre_process_station(self, siata, station, drop):
         station_temp = siata[siata['STATION'].values == station]
         station_temp['CONCENTRATION'].loc[station_temp['CONCENTRATION'] < 0] = np.NaN
+        station_temp['CONCENTRATION'].loc[np.isnan(station_temp['CONCENTRATION'])] = np.nanmean(station_temp['CONCENTRATION'])
+        if drop:
+            station_temp.drop_duplicates(subset='Date', keep='last', inplace=True)
+        station_temp.reset_index(inplace=True)
+        return station_temp
+
+    def pre_process_station_meteo(self, siata, station, drop):
+        station_temp = siata[siata['station'].values == station]
+        station_temp['Value'].loc[station_temp['Value'] < 0] = np.NaN
+        station_temp['Value'].loc[np.isnan(station_temp['Value'])] = np.nanmean(station_temp['Value'])
         if drop:
             station_temp.drop_duplicates(subset='Date', keep='last', inplace=True)
         station_temp.reset_index(inplace=True)
@@ -60,18 +65,18 @@ class DataManager:
     def get_pm25(self, station_number):
         if not (station_number in self.stations_pm25):
             self.stations_pm25[station_number] = self.pre_process_station(self.SIATA_pm25, "Station" + station_number,
-                                                                          False)
+                                                                          True)
         return self.stations_pm25[station_number]
 
     def get_temperature(self, station_number):
-        if not (station_number in self.stations_pm25):
-            self.stations_Temperature[station_number] = self.pre_process_station(self.SIATA_Temperature,
-                                                                                 "Station" + station_number, True)
+        if not (station_number in self.stations_Temperature):
+            self.stations_Temperature[station_number] = self.pre_process_station_meteo(self.SIATA_Temperature,
+                                                                                 "station" + station_number, True)
         return self.stations_Temperature[station_number]
 
     def get_wind(self, station_number):
-        if not (station_number in self.stations_pm25):
-            self.stations_Wind[station_number] = self.pre_process_station(self.SIATA_Wind, "Station" + station_number,
+        if not (station_number in self.stations_Wind):
+            self.stations_Wind[station_number] = self.pre_process_station_meteo(self.SIATA_Wind, "station" + station_number,
                                                                           True)
         return self.stations_Wind[station_number]
 
@@ -101,22 +106,27 @@ class Combiner:
             seq_x, seq_y = sequences[i:end_ix, :-1], sequences[end_ix:out_end_ix, -1]
             X.append(seq_x)
             y.append(seq_y)
+        print(len(array(X)))
+        print(len(array(y)))
         return array(X), array(y)
 
     def scale(self, data):
         scalerT = MinMaxScaler(feature_range=(0, 1))
         scalerT = scalerT.fit(data)
-        return scalerT.transform(data)
+        return scalerT.transform(data), scalerT
 
     def combine(self, n_input_steps, n_output_steps, *argv):
         print(len(argv))
+        self.scalers = []
         if len(argv) > 1:
             all_data = []
             for arg in argv:
                 temp = arg.reshape((len(arg), 1))
-                all_data.append(self.scale(temp))
+                scaled, scaler = self.scale(temp)
+                self.scalers.append(scaler)
+                all_data.append(scaled)
 
-                dataset = np.hstack(all_data)
-                return self.split_sequences(dataset, n_input_steps, n_output_steps)
+            dataset = np.hstack(all_data)
+            return self.split_sequences(dataset, n_input_steps, n_output_steps)
         else:
             return self.create_dataset(np.transpose( argv[0]), n_input_steps, n_output_steps)
