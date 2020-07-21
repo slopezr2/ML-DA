@@ -4,6 +4,16 @@ from deeplearning import CnnSiata
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import tensorflow as tf
+
+#Comment to run with GPU o Select CPU
+
+physical_devices = tf.config.experimental.list_physical_devices('GPU') 
+for physical_device in physical_devices: 
+    tf.config.experimental.set_memory_growth(physical_device, True)
+
+
+
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
@@ -29,7 +39,7 @@ X = X.reshape((X.shape[0], X.shape[1],n_features))
 cnnSiata = CnnSiata(n_input_steps,n_features, n_output_steps)
 
 #Fit Model
-cnnSiata.model.fit(X, Y, epochs=5, verbose=1)
+cnnSiata.model.fit(X, Y, epochs=100, verbose=1)
 
 # demonstrate prediction
 x_input = datax[n_train+10, :]

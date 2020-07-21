@@ -7,6 +7,15 @@ from numpy import math
 import warnings
 from tensorflow import keras
 
+import tensorflow as tf
+
+#Comment to run with GPU o Select CPU
+
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+for physical_device in physical_devices:
+    tf.config.experimental.set_memory_growth(physical_device, True)
+
+
 
 warnings.filterwarnings('ignore')
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
