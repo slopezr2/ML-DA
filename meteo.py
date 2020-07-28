@@ -1,6 +1,10 @@
 from datamanager import DataManager
 from datamanager import Combiner
 from deeplearning import CnnMeteo
+from deeplearning import LstmBidireccionalMeteo
+from deeplearning import LstmVanillaMeteo
+from deeplearning import LstmStackedMeteo
+from deeplearning import CnvLstmMeteo
 from sklearn.metrics import mean_squared_error
 import os
 from numpy import math
@@ -37,7 +41,10 @@ X, y = pre_processor.combine(n_input_steps, n_output_steps, station82_t.Value.va
 #Create Model
 n_train = 9500
 n_features = X.shape[2]
-cnnMeteo = CnnMeteo(n_input_steps,n_features, n_output_steps)
+cnnMeteo = CnvLstmMeteo(n_input_steps,n_features, n_output_steps)
+
+print(X.shape)
+print(y.shape)
 
 #Fit Model
 cnnMeteo.model.fit(X, y, epochs=3, verbose=1, batch_size=32)
