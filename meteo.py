@@ -6,6 +6,7 @@ from deeplearning import LstmVanillaMeteo
 from deeplearning import LstmStackedMeteo
 from sklearn.metrics import mean_squared_error
 import os
+import pandas as pd
 from numpy import math
 import warnings
 import json
@@ -46,9 +47,10 @@ mls = [CnnMeteo(n_input_steps,n_features, n_output_steps),LstmVanillaMeteo(n_inp
 mls_label = ['CnnMeteo', 'LstmVanillaMeteo', 'LstmStackedMeteo', 'LstmBidireccionalMeteo']
 
 for i in range(0,5):
-    history = mls[i].model.fit(X, y, epochs=10, verbose=1, batch_size=32)
-    history_dict = history.history
-    json.dump(history_dict, open('history/'+mls_label[i], 'w'))
+    history = mls[i].model.fit(X, y, epochs=20, verbose=1, batch_size=32)
+    hist_df = pd.DataFrame(history.history)
+    with open('history/'+mls_label[i], mode='w') as f:
+        hist_df.to_json(f)
     mls[i].model.save('models_save/'+mls_label[i])
 
 
