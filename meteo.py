@@ -4,12 +4,11 @@ from deeplearning import CnnMeteo
 from deeplearning import LstmBidireccionalMeteo
 from deeplearning import LstmVanillaMeteo
 from deeplearning import LstmStackedMeteo
-from deeplearning import CnvLstmMeteo
 from sklearn.metrics import mean_squared_error
 import os
 from numpy import math
 import warnings
-from tensorflow import keras
+import json
 
 import tensorflow as tf
 
@@ -41,27 +40,29 @@ X, y = pre_processor.combine(n_input_steps, n_output_steps, station82_t.Value.va
 #Create Model
 n_train = 9500
 n_features = X.shape[2]
-cnnMeteo = CnvLstmMeteo(n_input_steps,n_features, n_output_steps)
 
-print(X.shape)
-print(y.shape)
+mls = [CnnMeteo(n_input_steps,n_features, n_output_steps),LstmVanillaMeteo(n_input_steps,n_features, n_output_steps),
+       LstmStackedMeteo(n_input_steps,n_features, n_output_steps),LstmBidireccionalMeteo(n_input_steps,n_features, n_output_steps)  ]
+mls_label = ['CnnMeteo', 'LstmVanillaMeteo', 'LstmStackedMeteo', 'LstmBidireccionalMeteo']
 
-#Fit Model
-cnnMeteo.model.fit(X, y, epochs=3, verbose=1, batch_size=32)
-cnnMeteo.model.save('models_save/LSTM_Vanilla_station82_Meteo')
-# cnnMeteo.model = keras.models.load_model('models_save/LSTM_Vanilla_station82_Meteo')
+for i in range(0,5):
+    history = mls[i].model.fit(X, y, epochs=10, verbose=1, batch_size=32)
+    history_dict = history.history
+    json.dump(history_dict, open('history/'+mls_label[i], 'w'))
+    mls[i].model.save('models_save/'+mls_label[i])
 
-# demonstrate prediction
-x_input = X[9500+1,:,:]
-x_input=x_input.reshape((1,x_input.shape[0],x_input.shape[1]))
-yhat = cnnMeteo.model.predict(x_input, verbose=1)
 
-print("predicted")
-y_real=y[9500+1,:]
-y_real=y_real.reshape((1,y_real.shape[0]))
-scalerC = pre_processor.scalers[2]
-yhat =scalerC.inverse_transform(yhat)
-scalerC = pre_processor.scalers[3]
-yreal =scalerC.inverse_transform(y_real)
-testScore = math.sqrt(mean_squared_error(y_real[0,:], yhat[0,:]))
-print('Test Score: %.2f RMSE' % (testScore))
+    # demonstrate prediction
+    x_input = X[9500+1,:,:]
+    x_input = x_input.reshape((1,x_input.shape[0],x_input.shape[1]))
+    yhat = mls[i].model.predict(x_input, verbose=1)
+
+    print("predicted")
+    y_real=y[9500+1,:]
+    y_real=y_real.reshape((1,y_real.shape[0]))
+    scalerC = pre_processor.scalers[2]
+    yhat =scalerC.inverse_transform(yhat)
+    scalerC = pre_processor.scalers[3]
+    yreal = scalerC.inverse_transform(y_real)
+    testScore = math.sqrt(mean_squared_error(y_real[0,:], yhat[0,:]))
+    print('Test Score '+ mls_label[i] +': %.2f RMSE' % (testScore))
