@@ -44,14 +44,14 @@ n_features = X.shape[2]
 
 mls = [CnnMeteo(n_input_steps,n_features, n_output_steps),LstmVanillaMeteo(n_input_steps,n_features, n_output_steps),
        LstmStackedMeteo(n_input_steps,n_features, n_output_steps),LstmBidireccionalMeteo(n_input_steps,n_features, n_output_steps)  ]
-mls_label = ['CnnMeteo1', 'LstmVanillaMeteo1', 'LstmStackedMeteo1', 'LstmBidireccionalMeteo1']
+mls_label = ['CnnMeteo', 'LstmVanillaMeteo', 'LstmStackedMeteo', 'LstmBidireccionalMeteo']
 
 for i in range(0,5):
-    history = mls[i].model.fit(X, y, epochs=1, verbose=1, batch_size=32)
+    history = mls[i].model.fit(X, y, epochs=10, verbose=1, batch_size=32)
     hist_df = pd.DataFrame(history.history)
-    with open('history/'+mls_label[i], mode='w') as f:
+    with open("h_"+mls_label[i], mode='w') as f:
         hist_df.to_json(f)
-    mls[i].model.save(mls_label[i])
+    mls[i].model.save("m_"+mls_label[i])
 
 
     # demonstrate prediction
