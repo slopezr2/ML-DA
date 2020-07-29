@@ -46,7 +46,7 @@ mls = [CnnMeteo(n_input_steps,n_features, n_output_steps),LstmVanillaMeteo(n_inp
        LstmStackedMeteo(n_input_steps,n_features, n_output_steps),LstmBidireccionalMeteo(n_input_steps,n_features, n_output_steps)  ]
 mls_label = ['CnnMeteo', 'LstmVanillaMeteo', 'LstmStackedMeteo', 'LstmBidireccionalMeteo']
 
-for i in range(0,5):
+for i in range(0,4):
     history = mls[i].model.fit(X, y, epochs=10, verbose=1, batch_size=32)
     hist_df = pd.DataFrame(history.history)
     with open("h_"+mls_label[i], mode='w') as f:
