@@ -9,7 +9,7 @@ from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import ConvLSTM2D
 
 
-from keras.metrics import RootMeanSquaredError
+from tensorflow.keras.metrics import RootMeanSquaredError
 
 class CnnMeteo:
 
