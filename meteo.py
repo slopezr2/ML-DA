@@ -10,9 +10,13 @@ import pandas as pd
 from numpy import math
 import warnings
 import json
+import sys
+
+
 
 import tensorflow as tf
-
+param =  int(sys.argv[1])
+print(param)
 #Comment to run with GPU o Select CPU
 
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
@@ -46,8 +50,8 @@ mls = [CnnMeteo(n_input_steps,n_features, n_output_steps),LstmVanillaMeteo(n_inp
        LstmStackedMeteo(n_input_steps,n_features, n_output_steps),LstmBidireccionalMeteo(n_input_steps,n_features, n_output_steps)  ]
 mls_label = ['CnnMeteo', 'LstmVanillaMeteo', 'LstmStackedMeteo', 'LstmBidireccionalMeteo']
 
-for i in range(0,4):
-    history = mls[i].model.fit(X, y, epochs=10, verbose=1, batch_size=32)
+for i in range(param,param+2):
+    history = mls[i].model.fit(X, y, epochs=300, batch_size=32, validation_split=0.2, verbose=1)
     hist_df = pd.DataFrame(history.history)
     with open("h_"+mls_label[i], mode='w') as f:
         hist_df.to_json(f)

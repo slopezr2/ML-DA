@@ -14,4 +14,4 @@ class CnnSiata:
         self.model.add(Flatten())
         self.model.add(Dense(64, activation='relu'))
         self.model.add(Dense(n_output_steps))
-        self.model.compile(optimizer='adam', loss='mse')
+        self.model.compile(optimizer='adam', loss='mse', metrics=['accuracy'])
