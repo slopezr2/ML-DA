@@ -1,6 +1,7 @@
 from datamanager import DataManager
 from datamanager import Combiner
 from deeplearning import CnnMeteo
+from deeplearning import CnvLstmMeteo
 from deeplearning import LstmBidireccionalMeteo
 from deeplearning import LstmVanillaMeteo
 from deeplearning import LstmStackedMeteo
@@ -42,36 +43,39 @@ X, y = pre_processor.combine(n_input_steps, n_output_steps, station82_t.Value.va
 n_train = 9500
 n_features = X.shape[2]
 
-mls = [CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True),
-       CnnMeteo(n_input_steps, n_features, n_output_steps, drop=True),
-       CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
-       LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True),
-       LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, drop=True),
-       LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
-       LstmStackedMeteo(n_input_steps, n_features, n_output_steps, reg=True),
-       LstmStackedMeteo(n_input_steps, n_features, n_output_steps, drop=True),
-       LstmStackedMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
-       LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, reg=True),
-       LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, drop=True),
-       LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True)
-       ]
-mls_label = [
-    'CnnMeteo_r',
-    'CnnMeteo_d',
-    'CnnMeteo_r_d',
-    'LstmVanillaMeteo_r',
-    'LstmVanillaMeteo_d',
-    'LstmVanillaMeteo_r_d',
-    'LstmStackedMeteo_r',
-    'LstmStackedMeteo_d',
-    'LstmStackedMeteo_r_d',
-    'LstmBidireccionalMeteo_r',
-    'LstmBidireccionalMeteo_d',
-    'LstmBidireccionalMeteo_r_d'
-]
+# mls = [CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True),
+#        CnnMeteo(n_input_steps, n_features, n_output_steps, drop=True),
+#        CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
+#        LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True),
+#        LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, drop=True),
+#        LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
+#        LstmStackedMeteo(n_input_steps, n_features, n_output_steps, reg=True),
+#        LstmStackedMeteo(n_input_steps, n_features, n_output_steps, drop=True),
+#        LstmStackedMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
+#        LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, reg=True),
+#        LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, drop=True),
+#        LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True)
+#        ]
+# mls_label = [
+#     'CnnMeteo_r',
+#     'CnnMeteo_d',
+#     'CnnMeteo_r_d',
+#     'LstmVanillaMeteo_r',
+#     'LstmVanillaMeteo_d',
+#     'LstmVanillaMeteo_r_d',
+#     'LstmStackedMeteo_r',
+#     'LstmStackedMeteo_d',
+#     'LstmStackedMeteo_r_d',
+#     'LstmBidireccionalMeteo_r',
+#     'LstmBidireccionalMeteo_d',
+#     'LstmBidireccionalMeteo_r_d'
+# ]
 
-for i in range(param, param + 6):
-    history = mls[i].model.fit(X, y, epochs=300, batch_size=32, validation_split=0.2, verbose=1)
+mls = [CnvLstmMeteo(n_input_steps, n_features, n_output_steps)]
+mls_label = ['testcon']
+
+for i in range(param, param + 1):
+    history = mls[i].model.fit(X, y, epochs=15, batch_size=32, validation_split=0.2, verbose=1)
     hist_df = pd.DataFrame(history.history)
     with open("h_" + mls_label[i], mode='w') as f:
         hist_df.to_json(f)

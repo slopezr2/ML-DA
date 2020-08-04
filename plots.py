@@ -14,6 +14,7 @@ for i in range(0,4):
         history = history.drop(['index'], axis=1)
         history.sort_values(by='index2', inplace=True)
         print(history.head(200))
+        history = history.head(30)
         plt.plot(history['index2'], history['root_mean_squared_error'])
         plt.plot(history['index2'], history['val_root_mean_squared_error'])
         plt.title(names[i])

@@ -8,6 +8,7 @@ from tensorflow.keras.layers import MaxPooling1D
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Dropout
 from tensorflow.keras.layers import ConvLSTM2D
+from keras.layers import RepeatVector
 from tensorflow.keras import regularizers
 from tensorflow.keras.metrics import RootMeanSquaredError
 
@@ -72,11 +73,10 @@ class CnvLstmMeteo:
 
     def __init__(self, n_input_steps, n_features, n_output_steps):
         self.model = Sequential()
-        self.model.add(TimeDistributed(Conv1D(64, 2, activation='relu'), input_shape=(None, n_input_steps,
-                                                                                      n_features)))
-        self.model.add(TimeDistributed(MaxPooling1D()))
-        self.model.add(TimeDistributed(Flatten()))
-        self.model.add(LSTM(50, activation='relu'))
-        self.model.add(Dense(50, activation='relu'))
-        self.model.add(Dense(n_output_steps))
+        self.model.add(ConvLSTM2D(64, (1, 3), activation='relu', input_shape=(1, 1, n_input_steps, n_features)))
+        self.model.add(Flatten())
+        self.model.add(RepeatVector(n_output_steps))
+        self.model.add(LSTM(200, activation='relu', return_sequences=True))
+        self.model.add(TimeDistributed(Dense(100, activation='relu')))
+        self.model.add(TimeDistributed(Dense(1)))
         self.model.compile(optimizer='adam', loss='mse', metrics=[RootMeanSquaredError()])
