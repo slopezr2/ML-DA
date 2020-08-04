@@ -39,52 +39,61 @@ pre_processor = Combiner()
 X, y = pre_processor.combine(n_input_steps, n_output_steps, station82_t.Value.values, station82_w.Value.values,
                              station82_pm25.CONCENTRATION.values, station82_pm25.CONCENTRATION.values)
 
+print(X.shape)
+print(y.shape)
 # Create Model
 n_train = 9500
 n_features = X.shape[2]
 
-# mls = [CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True),
-#        CnnMeteo(n_input_steps, n_features, n_output_steps, drop=True),
-#        CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
-#        LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True),
-#        LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, drop=True),
-#        LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
-#        LstmStackedMeteo(n_input_steps, n_features, n_output_steps, reg=True),
-#        LstmStackedMeteo(n_input_steps, n_features, n_output_steps, drop=True),
-#        LstmStackedMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
-#        LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, reg=True),
-#        LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, drop=True),
-#        LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True)
-#        ]
-# mls_label = [
-#     'CnnMeteo_r',
-#     'CnnMeteo_d',
-#     'CnnMeteo_r_d',
-#     'LstmVanillaMeteo_r',
-#     'LstmVanillaMeteo_d',
-#     'LstmVanillaMeteo_r_d',
-#     'LstmStackedMeteo_r',
-#     'LstmStackedMeteo_d',
-#     'LstmStackedMeteo_r_d',
-#     'LstmBidireccionalMeteo_r',
-#     'LstmBidireccionalMeteo_d',
-#     'LstmBidireccionalMeteo_r_d'
-# ]
+ mls = [CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True),
+        CnnMeteo(n_input_steps, n_features, n_output_steps, drop=True),
+        CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
+        LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True),
+        LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, drop=True),
+        LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
+        LstmStackedMeteo(n_input_steps, n_features, n_output_steps, reg=True),
+        LstmStackedMeteo(n_input_steps, n_features, n_output_steps, drop=True),
+        LstmStackedMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
+        LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, reg=True),
+        LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, drop=True),
+        LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
+        CnvLstmMeteo(n_input_steps, n_features, n_output_steps,reg=False,drop=False),
+        CnvLstmMeteo(n_input_steps, n_features, n_output_steps,reg=True,drop=False),
+        CnvLstmMeteo(n_input_steps, n_features, n_output_steps,reg=False,drop=True),
+        CnvLstmMeteo(n_input_steps, n_features, n_output_steps,reg=True,drop=True),
+        ]
+ mls_label = [
+     'CnnMeteo_r',
+     'CnnMeteo_d',
+     'CnnMeteo_r_d',
+     'LstmVanillaMeteo_r',
+     'LstmVanillaMeteo_d',
+     'LstmVanillaMeteo_r_d',
+     'LstmStackedMeteo_r',
+     'LstmStackedMeteo_d',
+     'LstmStackedMeteo_r_d',
+     'LstmBidireccionalMeteo_r',
+     'LstmBidireccionalMeteo_d',
+     'LstmBidireccionalMeteo_r_d',
+     'CnvLstmMeteo',
+     'CnvLstmMeteo_r'
+     'CnvLstmMeteo_d',
+     'CnvLstmMeteo_r_d'
+ ]
 
-mls = [CnvLstmMeteo(n_input_steps, n_features, n_output_steps)]
-mls_label = ['testcon']
 
-for i in range(param, param + 1):
-    history = mls[i].model.fit(X, y, epochs=15, batch_size=32, validation_split=0.2, verbose=1)
+
+for i in range(param, param + 8):
+    history = mls[i].fit(X, y, epochs=300, batch_size=32, validation_split=0.2, verbose=1)
     hist_df = pd.DataFrame(history.history)
     with open("h_" + mls_label[i], mode='w') as f:
         hist_df.to_json(f)
-    mls[i].model.save("m_" + mls_label[i])
+    mls[i].model.save("m_" + mls_label[i]+".h5")
 
     # demonstrate prediction
     x_input = X[9500 + 1, :, :]
     x_input = x_input.reshape((1, x_input.shape[0], x_input.shape[1]))
-    yhat = mls[i].model.predict(x_input, verbose=1)
+    yhat = mls[i].predict(x_input, verbose=1)
 
     print("predicted")
     y_real = y[9500 + 1, :]
@@ -92,6 +101,6 @@ for i in range(param, param + 1):
     scalerC = pre_processor.scalers[2]
     yhat = scalerC.inverse_transform(yhat)
     scalerC = pre_processor.scalers[3]
-    yreal = scalerC.inverse_transform(y_real)
-    testScore = math.sqrt(mean_squared_error(y_real[0, :], yhat[0, :]))
+    y_real = scalerC.inverse_transform(y_real)
+    testScore = mls[i].compare(y_real,yhat)
     print('Test Score ' + mls_label[i] + ': %.2f RMSE' % (testScore))
