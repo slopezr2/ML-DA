@@ -45,7 +45,7 @@ print(y.shape)
 n_train = 9500
 n_features = X.shape[2]
 
- mls = [CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True),
+mls = [CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True),
         CnnMeteo(n_input_steps, n_features, n_output_steps, drop=True),
         CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
         LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True),
@@ -62,7 +62,7 @@ n_features = X.shape[2]
         CnvLstmMeteo(n_input_steps, n_features, n_output_steps,reg=False,drop=True),
         CnvLstmMeteo(n_input_steps, n_features, n_output_steps,reg=True,drop=True),
         ]
- mls_label = [
+mls_label = [
      'CnnMeteo_r',
      'CnnMeteo_d',
      'CnnMeteo_r_d',
