@@ -46,49 +46,47 @@ n_train = 9500
 n_features = X.shape[2]
 
 mls = [CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True),
-        CnnMeteo(n_input_steps, n_features, n_output_steps, drop=True),
-        CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
-        LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True),
-        LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, drop=True),
-        LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
-        LstmStackedMeteo(n_input_steps, n_features, n_output_steps, reg=True),
-        LstmStackedMeteo(n_input_steps, n_features, n_output_steps, drop=True),
-        LstmStackedMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
-        LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, reg=True),
-        LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, drop=True),
-        LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
-        CnvLstmMeteo(n_input_steps, n_features, n_output_steps,reg=False,drop=False),
-        CnvLstmMeteo(n_input_steps, n_features, n_output_steps,reg=True,drop=False),
-        CnvLstmMeteo(n_input_steps, n_features, n_output_steps,reg=False,drop=True),
-        CnvLstmMeteo(n_input_steps, n_features, n_output_steps,reg=True,drop=True),
-        ]
+       CnnMeteo(n_input_steps, n_features, n_output_steps, drop=True),
+       CnnMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
+       LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True),
+       LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, drop=True),
+       LstmVanillaMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
+       LstmStackedMeteo(n_input_steps, n_features, n_output_steps, reg=True),
+       LstmStackedMeteo(n_input_steps, n_features, n_output_steps, drop=True),
+       LstmStackedMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
+       LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, reg=True),
+       LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, drop=True),
+       LstmBidireccionalMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
+       CnvLstmMeteo(n_input_steps, n_features, n_output_steps, reg=False, drop=False),
+       CnvLstmMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=False),
+       CnvLstmMeteo(n_input_steps, n_features, n_output_steps, reg=False, drop=True),
+       CnvLstmMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True),
+       ]
 mls_label = [
-     'CnnMeteo_r',
-     'CnnMeteo_d',
-     'CnnMeteo_r_d',
-     'LstmVanillaMeteo_r',
-     'LstmVanillaMeteo_d',
-     'LstmVanillaMeteo_r_d',
-     'LstmStackedMeteo_r',
-     'LstmStackedMeteo_d',
-     'LstmStackedMeteo_r_d',
-     'LstmBidireccionalMeteo_r',
-     'LstmBidireccionalMeteo_d',
-     'LstmBidireccionalMeteo_r_d',
-     'CnvLstmMeteo',
-     'CnvLstmMeteo_r'
-     'CnvLstmMeteo_d',
-     'CnvLstmMeteo_r_d'
- ]
-
-
+    'CnnMeteo_r',
+    'CnnMeteo_d',
+    'CnnMeteo_r_d',
+    'LstmVanillaMeteo_r',
+    'LstmVanillaMeteo_d',
+    'LstmVanillaMeteo_r_d',
+    'LstmStackedMeteo_r',
+    'LstmStackedMeteo_d',
+    'LstmStackedMeteo_r_d',
+    'LstmBidireccionalMeteo_r',
+    'LstmBidireccionalMeteo_d',
+    'LstmBidireccionalMeteo_r_d',
+    'CnvLstmMeteo',
+    'CnvLstmMeteo_r'
+    'CnvLstmMeteo_d',
+    'CnvLstmMeteo_r_d'
+]
 
 for i in range(param, param + 8):
     history = mls[i].fit(X, y, epochs=300, batch_size=32, validation_split=0.2, verbose=1)
     hist_df = pd.DataFrame(history.history)
     with open("h_" + mls_label[i], mode='w') as f:
         hist_df.to_json(f)
-    mls[i].model.save("m_" + mls_label[i]+".h5")
+    mls[i].model.save("m_" + mls_label[i] + ".h5")
 
     # demonstrate prediction
     x_input = X[9500 + 1, :, :]
@@ -102,5 +100,5 @@ for i in range(param, param + 8):
     yhat = scalerC.inverse_transform(yhat)
     scalerC = pre_processor.scalers[3]
     y_real = scalerC.inverse_transform(y_real)
-    testScore = mls[i].compare(y_real,yhat)
+    testScore = mls[i].compare(y_real, yhat)
     print('Test Score ' + mls_label[i] + ': %.2f RMSE' % (testScore))
