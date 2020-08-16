@@ -2,8 +2,27 @@ from datamanager import DataManager
 from datamanager import Combiner
 from deeplearning import CnnMeteo
 from deeplearning import CnvLstmMeteo
+from deeplearning import LstmBidireccionalMeteo
+from deeplearning import LstmVanillaMeteo
+from deeplearning import LstmStackedMeteo
+from sklearn.metrics import mean_squared_error
+import os
+import pandas as pd
+from numpy import math
+import warnings
+import json
+import sys
 import numpy as np
+import tensorflow as tf
 
+
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+for physical_device in physical_devices:
+    tf.config.experimental.set_memory_growth(physical_device, True)
+
+warnings.filterwarnings('ignore')
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 
 dataM = DataManager(path="data/", filter_items=["pm25", "temperature", "wind"])
