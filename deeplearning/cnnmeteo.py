@@ -12,8 +12,10 @@ from tensorflow.keras.layers import RepeatVector
 from tensorflow.keras import regularizers
 from tensorflow.keras.metrics import RootMeanSquaredError
 from sklearn.metrics import mean_squared_error
+from tensorflow.keras.models import load_model
 from numpy import math
-
+import matplotlib.pyplot as plt
+import numpy as np
 class Regularized_ML:
     def __init__(self):
         self.model = Sequential()
@@ -36,8 +38,28 @@ class Regularized_ML:
     def compare(self,y_real,yhat):
         testScore = math.sqrt(mean_squared_error(y_real[0, :], yhat[0,:]))
         return testScore
-
-
+    def load(self,file):
+        self.model=load_model(file)
+        
+    def plot_forecast(self,datesx,x_prev,datesy,yhat,y_real,title,save=False):
+        plt.figure(figsize=(30,15))
+        plt.plot(datesx,x_prev,'b',linewidth=2,label='Input Data')
+        plt.plot(datesy,yhat,'g',linewidth=2,label='Prediction')
+        plt.plot(datesy,y_real,'r*-',linewidth=1,markersize=5,label='Real Data')
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=16)
+        plt.grid(axis='x')
+        plt.legend(fontsize=20)
+        plt.title(title)
+        ax = plt.gca()
+        xmin, xmax = ax.get_xlim()
+        custom_ticks = np.linspace(xmin, xmax, 10, dtype=int)
+        ax.set_xticks(custom_ticks)
+        plt.tight_layout()
+        plt.show()
+        if save :
+            plt.savefig(title+'.png')
+            
 class CnnMeteo(Regularized_ML):
 
     def __init__(self, n_input_steps, n_features, n_output_steps, reg=False, drop=False):
@@ -112,8 +134,30 @@ class CnvLstmMeteo:
     def predict(self,x_input, verbose=1):
         x_input2=x_input.reshape((1,1 ,1,x_input.shape[1], x_input.shape[2]))
         y=self.model.predict(x_input2, verbose=1)
-        return y[0]
+        return y[:,:,0]
 
     def compare(self,y_real,yhat):
-       testScore = math.sqrt(mean_squared_error(y_real[0, :], yhat))
+       testScore = math.sqrt(mean_squared_error(y_real[0, :], yhat[0,:]))
        return testScore
+   
+    def load(self,file):
+        self.model=load_model(file)
+        
+    def plot_forecast(self,datesx,x_prev,datesy,yhat,y_real,title,save=False):
+        plt.figure(figsize=(30,15))
+        plt.plot(datesx,x_prev,'b',linewidth=2,label='Input Data')
+        plt.plot(datesy,yhat,'g',linewidth=2,label='Prediction')
+        plt.plot(datesy,y_real,'r*-',linewidth=1,markersize=5,label='Real Data')
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=16)
+        plt.grid(axis='x')
+        plt.legend(fontsize=20)
+        plt.title(title)
+        ax = plt.gca()
+        xmin, xmax = ax.get_xlim()
+        custom_ticks = np.linspace(xmin, xmax, 10, dtype=int)
+        ax.set_xticks(custom_ticks)
+        plt.tight_layout()
+        plt.show()
+        if save :
+            plt.savefig(title+'.png')
