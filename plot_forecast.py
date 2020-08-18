@@ -54,28 +54,31 @@ mls_label = [ 'CnnMeteo_d',
     'CnvLstmMeteo_r_d'
 ]
 
-y_real = y[n_train + 1, :]
-y_real = y_real.reshape((1, y_real.shape[0]))
-scalerC = pre_processor.scalers[3]
-y_real = scalerC.inverse_transform(y_real)
-scalerC = pre_processor.scalers[2]
-x_prev=X[n_train , :, 2]
-x_prev = x_prev.reshape((1, x_prev.shape[0]))
-x_prev=scalerC.inverse_transform(x_prev)
+
+days_forecast=5
+
 
 for i in range(len(mls_label)):
     mls[i].load("m_" + mls_label[i] + ".h5")
-
-    # demonstrate prediction
-    x_input = X[n_train + 1, :, :]
-    x_input = x_input.reshape((1, x_input.shape[0], x_input.shape[1]))
-    yhat = mls[i].predict(x_input, verbose=1)
-
-    print("predicted")
+    for j in range(days_forecast):
+        y_real = y[n_train + 1+j*24, :]
+        y_real = y_real.reshape((1, y_real.shape[0]))
+        scalerC = pre_processor.scalers[3]
+        y_real = scalerC.inverse_transform(y_real)
+        scalerC = pre_processor.scalers[2]
+        x_prev=X[n_train+j*24 , :, 2]
+        x_prev = x_prev.reshape((1, x_prev.shape[0]))
+        x_prev=scalerC.inverse_transform(x_prev)
+        # demonstrate prediction
+        x_input = X[n_train + 1 + j, :, :]
+        x_input = x_input.reshape((1, x_input.shape[0], x_input.shape[1]))
+        yhat = mls[i].predict(x_input, verbose=1)
     
-    scalerC = pre_processor.scalers[2]
-    yhat = scalerC.inverse_transform(yhat)
-    testScore = mls[i].compare(y_real, yhat)
-    print('Test Score ' + mls_label[i] + ': %.2f RMSE' % (testScore))
-    
-    mls[i].plot_forecast(datesx[n_train,:],x_prev[0,:],datesy[n_train],yhat[0,:],y_real[0,:],(mls_label[i] + ': %.2f RMSE' % (testScore)),save=True)
+        print("predicted")
+        
+        scalerC = pre_processor.scalers[2]
+        yhat = scalerC.inverse_transform(yhat)
+        testScore = mls[i].compare(y_real, yhat)
+        print('Test Score ' + mls_label[i] + ': %.2f RMSE' % (testScore))
+        
+        mls[i].plot_forecast(datesx[n_train+j*24,:],x_prev[0,:],datesy[n_train+j*24],yhat[0,:],y_real[0,:],(mls_label[i] + ': %.2f RMSE' % (testScore) +' Forecast day %.1i' % (j+1) ),save=True)
