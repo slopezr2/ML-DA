@@ -3,8 +3,11 @@ import matplotlib.pyplot as plt
 import json
 pd.set_option('display.max_columns', None)
 
-names = ['CnnMeteo', 'LstmVanillaMeteo', 'LstmStackedMeteo', 'LstmBidireccionalMeteo']
-for i in range(0,4):
+names = [ 'CnnMeteo_d',
+    'CnvLstmMeteo',
+    'CnvLstmMeteo_r_d'
+]
+for i in range(0,len(names)):
     with open('h_'+names[i]) as json_file:
         data = json.load(json_file)
         history = pd.DataFrame(data)
@@ -14,7 +17,7 @@ for i in range(0,4):
         history = history.drop(['index'], axis=1)
         history.sort_values(by='index2', inplace=True)
         print(history.head(200))
-        history = history.head(30)
+        history = history.head(300)
         plt.plot(history['index2'], history['root_mean_squared_error'])
         plt.plot(history['index2'], history['val_root_mean_squared_error'])
         plt.title(names[i])

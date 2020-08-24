@@ -62,11 +62,12 @@ class Regularized_ML:
             
 class CnnMeteo(Regularized_ML):
 
-    def __init__(self, n_input_steps, n_features, n_output_steps, reg=False, drop=False):
+    def __init__(self, n_input_steps, n_features, n_output_steps, reg=False, drop=False,n_LSTM_hidden_layers=1,n_cells=100):
         super().__init__()
-        self.model.add(LSTM(100, return_sequences=True, input_shape=(n_input_steps, n_features)))
-        self.model.add(LSTM(100, return_sequences=True))
-        self.model.add(LSTM(100))
+        self.model.add(LSTM(n_cells, return_sequences=True, input_shape=(n_input_steps, n_features)))
+        for _ in range(n_LSTM_hidden_layers):
+        	self.model.add(LSTM(n_cells, return_sequences=True))
+        self.model.add(LSTM(n_cells))
         self.add_regulization(reg, drop)
         self.model.add(Dense(n_output_steps))
         self.model.compile(optimizer='adam', loss='mse', metrics=[RootMeanSquaredError()])
@@ -105,12 +106,13 @@ class LstmBidireccionalMeteo(Regularized_ML):
 
 class CnvLstmMeteo:
 
-    def __init__(self, n_input_steps, n_features, n_output_steps,reg=False, drop=False):
+    def __init__(self, n_input_steps, n_features, n_output_steps,reg=False, drop=False,n_LSTM_hidden_layers=1,n_cells=200):
         self.model = Sequential()
         self.model.add(ConvLSTM2D(64, (1, 3), activation='relu', input_shape= (1,1,n_input_steps, n_features)))
         self.model.add(Flatten())
         self.model.add(RepeatVector(n_output_steps))
-        self.model.add(LSTM(200, activation='relu', return_sequences=True))
+        for _ in range(n_LSTM_hidden_layers):
+        	self.model.add(LSTM(n_cells, activation='relu', return_sequences=True))
         self.add_regulization(reg,drop)
         self.model.add(TimeDistributed(Dense(1)))
         self.model.compile(optimizer='adam', loss='mse', metrics=[RootMeanSquaredError()])
