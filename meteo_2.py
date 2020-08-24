@@ -80,5 +80,5 @@ for semana in semanas:
 			yhat = scalerC.inverse_transform(yhat)
 			scalerC = pre_processor.scalers[3]
 			y_real = scalerC.inverse_transform(y_real)
-		testScore = mls[param].compare(y_real, yhat)
-		print('Test Score ' + mls_label[param] +str(semana)+"_hidden_"+str(n_LSTM_hidden_layers)+"_cells_"+str(n_cells)+"_"+ ': %.2f RMSE' % (testScore))
+			testScore = mls[param].compare(y_real, yhat)
+			print('Test Score ' + mls_label[param] +str(semana)+"_hidden_"+str(n_LSTM_hidden_layers)+"_cells_"+str(n_cells)+"_"+ ': %.2f RMSE' % (testScore))
