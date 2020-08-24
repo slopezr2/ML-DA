@@ -37,7 +37,8 @@ n_input_steps = 24 * 7 * 2
 n_output_steps = 24 * 3
 pre_processor = Combiner()
 X, y = pre_processor.combine(n_input_steps, n_output_steps, station82_t.Value.values, station82_w.Value.values,
-                             station82_pm25.CONCENTRATION.values, station82_pm25.CONCENTRATION.values)
+                             station82_pm25.CONCENTRATION.values,station82_t.Date.dt.dayofweek.values,station82_t.Date.dt.hour.values , station82_pm25.CONCENTRATION.values)
+
 
 print(X.shape)
 print(y.shape)
