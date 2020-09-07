@@ -55,13 +55,13 @@ mls_label = [ 'CnnMeteo_d',
 ]
 
 
-days_forecast=5
+days_forecast=1
 
 
 for i in range(len(mls_label)):
     mls[i].load("m_" + mls_label[i] + ".h5")
     for j in range(days_forecast):
-        y_real = y[n_train + 1+j*24, :]
+        y_real = y[n_train + j*24, :]
         y_real = y_real.reshape((1, y_real.shape[0]))
         scalerC = pre_processor.scalers[3]
         y_real = scalerC.inverse_transform(y_real)

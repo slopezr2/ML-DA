@@ -33,9 +33,9 @@ station82_t = dataM.get_temperature("82")
 station82_w = dataM.get_wind("82")
 
 #Parameters Tunning experiments 
-semanas=[1,2,3]
-LSTM_hidden_layers=[1,2,3]
-cells=[100,200,500,1000]
+semanas=[2,3]
+LSTM_hidden_layers=[1]
+cells=[100,200,500]
 
 mls_label = [ 'CnnMeteo_d',
 	  'CnvLstmMeteo',
@@ -66,7 +66,7 @@ for semana in semanas:
 			hist_df = pd.DataFrame(history.history)
 			with open("h_input_"+str(semana)+"_hidden_"+str(n_LSTM_hidden_layers)+"_cells_"+str(n_cells)+"_"+ mls_label[param], mode='w') as f:
 					hist_df.to_json(f)
-			mls[param].model.save("m_" +str(semana)+"_hidden_"+str(n_LSTM_hidden_layers)+"_cells_"+str(n_cells)+"_"+ mls_label[param] + ".h5")
+			mls[param].model.save("m_Weeks_" +str(semana)+"_hidden_"+str(n_LSTM_hidden_layers)+"_cells_"+str(n_cells)+"_"+ mls_label[param] + ".h5")
 
 			# demonstrate prediction
 			x_input = X[9500 + 1, :, :]

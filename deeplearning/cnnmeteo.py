@@ -15,6 +15,7 @@ from sklearn.metrics import mean_squared_error
 from tensorflow.keras.models import load_model
 from numpy import math
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import numpy as np
 class Regularized_ML:
     def __init__(self):
@@ -42,23 +43,27 @@ class Regularized_ML:
         self.model=load_model(file)
         
     def plot_forecast(self,datesx,x_prev,datesy,yhat,y_real,title,save=False):
+        myFmt = mdates.DateFormatter('%d')
+        
         plt.figure(figsize=(30,15))
         plt.plot(datesx,x_prev,'b',linewidth=2,label='Input Data')
         plt.plot(datesy,yhat,'g',linewidth=2,label='Prediction')
         plt.plot(datesy,y_real,'r*-',linewidth=1,markersize=5,label='Real Data')
-        plt.xticks(fontsize=14)
-        plt.yticks(fontsize=16)
+        plt.xticks(fontsize=16)
+        plt.yticks(fontsize=30)
         plt.grid(axis='x')
         plt.legend(fontsize=20)
-        plt.title(title)
+        plt.title(title,fontsize=30)
         ax = plt.gca()
         xmin, xmax = ax.get_xlim()
         custom_ticks = np.linspace(xmin, xmax, 10, dtype=int)
         ax.set_xticks(custom_ticks)
+#        ax.xaxis.set_major_formatter(myFmt)
         plt.tight_layout()
-        plt.show()
         if save :
             plt.savefig(title+'.png')
+        plt.show()
+        
             
 class CnnMeteo(Regularized_ML):
 
@@ -150,16 +155,17 @@ class CnvLstmMeteo:
         plt.plot(datesx,x_prev,'b',linewidth=2,label='Input Data')
         plt.plot(datesy,yhat,'g',linewidth=2,label='Prediction')
         plt.plot(datesy,y_real,'r*-',linewidth=1,markersize=5,label='Real Data')
-        plt.xticks(fontsize=14)
-        plt.yticks(fontsize=16)
+        plt.xticks(fontsize=16)
+        plt.yticks(fontsize=30)
         plt.grid(axis='x')
         plt.legend(fontsize=20)
-        plt.title(title)
+        plt.title(title,fontsize=30)
         ax = plt.gca()
         xmin, xmax = ax.get_xlim()
         custom_ticks = np.linspace(xmin, xmax, 10, dtype=int)
         ax.set_xticks(custom_ticks)
         plt.tight_layout()
-        plt.show()
         if save :
             plt.savefig(title+'.png')
+        plt.show()
+        
