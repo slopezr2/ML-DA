@@ -49,9 +49,9 @@ days_forecast=1
 
 
 #Parameters Tunning experiments 
-semanas=[1]
-LSTM_hidden_layers=[1,2]
-cells=[100,200,500]
+semanas=[2]
+LSTM_hidden_layers=[2]
+cells=[200]
 
 for semana in semanas:
 	n_input_steps = 24 * 7 * semana
@@ -88,8 +88,7 @@ for semana in semanas:
 				    # demonstrate prediction
 				    x_input = X[n_train + 1 + j, :, :]
 				    x_input = x_input.reshape((1, x_input.shape[0], x_input.shape[1]))
-				    yhat = mls[param].predict(x_input, verbose=1)
-				
+				    yhat = mls[param].predict(x_input, verbose=1)		
 				    print("predicted")
 				    
 				    scalerC = pre_processor.scalers[2]
