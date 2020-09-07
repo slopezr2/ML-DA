@@ -80,6 +80,21 @@ class DataManager:
                                                                           True)
         return self.stations_Wind[station_number]
 
+    def generate_ensambles(self, xb, std, n_ensembles):
+        temp = np.zeros((xb.size, n_ensembles))
+        for i in range(n_ensembles):
+            temp[:,i] = np.add(xb.T,std * np.random.randn(xb.size,))
+        return temp
+
+    def calculate_cov(self, X):
+        return np.cov(X)
+
+    def calculate_cov2(self, X):
+        xb = np.zeros((X[:,0].size,1))
+        xb[:,0]=np.mean(X,axis=1)
+        temp = X - xb.dot(np.ones((X[0,:].size,1)).T)
+        return 1/X[:, 0].size * temp.dot(temp.T)
+
 
 class Combiner:
 
