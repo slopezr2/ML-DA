@@ -33,9 +33,9 @@ station82_t = dataM.get_temperature("82")
 station82_w = dataM.get_wind("82")
 
 #Parameters Tunning experiments 
-semanas=[2,3]
+semanas=[2]
 LSTM_hidden_layers=[1]
-cells=[100,200,500]
+cells=[100,200]
 
 mls_label = [ 'CnnMeteo_d',
 	  'CnvLstmMeteo',
@@ -56,9 +56,6 @@ for semana in semanas:
 	for n_LSTM_hidden_layers in LSTM_hidden_layers:
 	
 		for n_cells in cells:
-			if semana==2 and (n_LSTM_hidden_layers==1) and (n_cells<500):
-				print('Suerte que sigo')
-				continue
 			mls = [ CnnMeteo(n_input_steps, n_features, n_output_steps, drop=True,n_LSTM_hidden_layers=n_LSTM_hidden_layers,n_cells=n_cells),
 						 CnvLstmMeteo(n_input_steps, n_features, n_output_steps, reg=False, drop=False,n_LSTM_hidden_layers=n_LSTM_hidden_layers,n_cells=n_cells),
 						 CnvLstmMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True,n_LSTM_hidden_layers=n_LSTM_hidden_layers,n_cells=n_cells),
