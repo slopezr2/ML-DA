@@ -47,16 +47,20 @@ dataM = DataManager(path="data/", filter_items=["pm25", "temperature", "wind"])
 n_input_steps = 24 * 7 * semana
 n_output_steps=24*3
 
-stations=pd.read_csv('./Lista_estaciones.csv',delimiter=',')
+stations=pd.read_csv('./data/Lista_estaciones.csv',delimiter=',')
 stations_SIATA=np.array(stations['PM25'].values).astype('str')
 stations_Meteo=np.array(stations['Meteo'].values).astype('str')
 
 for station in range(param*7, (param+1)*7-1):
-    if station>19:
+    if station>18:
         continue
     station_pm25 = dataM.get_pm25(stations_SIATA[station])
     station_t = dataM.get_temperature(stations_Meteo[station])
     station_w = dataM.get_wind(stations_Meteo[station])
+    number_samples=min(len(station_t.Value.values),len(station_pm25.CONCENTRATION.values))
+    station_pm25 =station_pm25[0:number_samples]
+    station_t =station_t[0:number_samples]
+    station_w =station_w[0:number_samples]
     pre_processor = Combiner()
     X, y = pre_processor.combine(n_input_steps, n_output_steps, station_t.Value.values, station_w.Value.values,
                                  station_pm25.CONCENTRATION.values,station_t.Date.dt.dayofweek.values,station_t.Date.dt.hour.values , station_pm25.CONCENTRATION.values)
