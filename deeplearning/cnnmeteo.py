@@ -61,7 +61,7 @@ class Regularized_ML:
 #        ax.xaxis.set_major_formatter(myFmt)
         plt.tight_layout()
         if save :
-            plt.savefig(title+'.png')
+            plt.savefig("./figures/"+title+'.png')
         plt.show()
         
             
@@ -166,6 +166,6 @@ class CnvLstmMeteo:
         ax.set_xticks(custom_ticks)
         plt.tight_layout()
         if save :
-            plt.savefig(title+'.png')
+            plt.savefig("./figures/"+title+'.png')
         plt.show()
         

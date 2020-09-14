@@ -63,9 +63,9 @@ for semana in semanas:
 
 			history = mls[param].fit(X, y, epochs=300, batch_size=32, validation_split=0.2, verbose=1)
 			hist_df = pd.DataFrame(history.history)
-			with open("h_input_"+str(semana)+"_hidden_"+str(n_LSTM_hidden_layers)+"_cells_"+str(n_cells)+"_"+ mls_label[param], mode='w') as f:
+			with open("./gistory_files/"+"h_input_"+str(semana)+"_hidden_"+str(n_LSTM_hidden_layers)+"_cells_"+str(n_cells)+"_"+ mls_label[param], mode='w') as f:
 					hist_df.to_json(f)
-			mls[param].model.save("m_Weeks_" +str(semana)+"_hidden_"+str(n_LSTM_hidden_layers)+"_cells_"+str(n_cells)+"_"+ mls_label[param] + ".h5")
+			mls[param].model.save("./models/"+"m_Weeks_" +str(semana)+"_hidden_"+str(n_LSTM_hidden_layers)+"_cells_"+str(n_cells)+"_"+ mls_label[param] + ".h5")
 
 			# demonstrate prediction
 			x_input = X[9500 + 1, :, :]
