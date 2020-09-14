@@ -36,7 +36,7 @@ n_features=5
 window_moving_average=5
 
 
-days_forecast=1
+days_forecast=3
 dataM = DataManager(path="data/", filter_items=["pm25", "temperature", "wind"])
 
 
