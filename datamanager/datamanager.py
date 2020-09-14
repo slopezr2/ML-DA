@@ -159,18 +159,18 @@ class Combiner:
 
 class CsvWriter:
 
-    def __init__(self, parameter, unit, avg):
+    def __init__(self):
         self.data = {'STATION': [], 'LAT': [], 'LON': [], 'CONCENTRATION': [], 'YEAR': [], 'MONTH': [], 'DAY': [],
                      'HOUR': []}
-        self.parameter = parameter
-        self.unit = unit
-        self.avg = avg
         template = 'observations/templates/Observaciones_SIATA_tpm25_20190101.csv'
         self.template = pd.read_csv(template)
 
-    def add(self, yhat, station, dateini, hours):
+    def add(self, yhat, station, parameter, unit, avg, dateini, hours):
         self.data['CONCENTRATION'].extend(yhat)
         self.data['STATION'].extend([station for i in yhat])
+        self.data['PARAMETER'] = [parameter for i in yhat]
+        self.data['UNITS'] = [unit for i in yhat]
+        self.data['AVERAGING_PERIOD'] = [avg for i in yhat]
         dates = self.daterange(dateini, hours, len(yhat))
         self.data['YEAR'].extend([d.year for d in dates])
         self.data['MONTH'].extend([d.month for d in dates])
@@ -188,7 +188,4 @@ class CsvWriter:
             start_date += delta
 
     def write_observation(self, path):
-        self.data['PARAMETER'] = [self.parameter for i in range(len(self.data['STATION']))]
-        self.data['UNITS'] = [self.unit for i in range(len(self.data['STATION']))]
-        self.data['AVERAGING_PERIOD'] = [self.avg for i in range(len(self.data['STATION']))]
         pd.DataFrame.from_dict(self.data).to_csv(path, index=False)
