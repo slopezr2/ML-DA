@@ -168,9 +168,9 @@ class CsvWriter:
     def add(self, yhat, station, parameter, unit, avg, dateini, hours):
         self.data['CONCENTRATION'].extend(yhat)
         self.data['STATION'].extend([station for i in yhat])
-        self.data['PARAMETER'] = [parameter for i in yhat]
-        self.data['UNITS'] = [unit for i in yhat]
-        self.data['AVERAGING_PERIOD'] = [avg for i in yhat]
+        self.data['PARAMETER'].extend([parameter for i in yhat])
+        self.data['UNITS'].extend([unit for i in yhat])
+        self.data['AVERAGING_PERIOD'].extend([avg for i in yhat])
         dates = self.daterange(dateini, hours, len(yhat))
         self.data['YEAR'].extend([d.year for d in dates])
         self.data['MONTH'].extend([d.month for d in dates])
