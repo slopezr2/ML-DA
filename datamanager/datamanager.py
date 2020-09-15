@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from datetime import datetime
 from numpy import array
 from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime, timedelta
@@ -160,10 +159,12 @@ class Combiner:
 class CsvWriter:
 
     def __init__(self):
-        self.data = {'STATION': [], 'LAT': [], 'LON': [], 'CONCENTRATION': [], 'YEAR': [], 'MONTH': [], 'DAY': [],
-                     'HOUR': []}
+        # self.data = {'STATION': [], 'LAT': [], 'LON': [], 'CONCENTRATION': [], 'YEAR': [], 'MONTH': [], 'DAY': [],
+        #              'HOUR': [], 'PARAMETER':[], 'UNITS':[], 'AVERAGING_PERIOD':[], 'ALT':[]}
+
         template = 'observations/templates/Observaciones_SIATA_tpm25_20190101.csv'
         self.template = pd.read_csv(template)
+        self.data = {name: [] for name in list(self.template.columns)}
 
     def add(self, yhat, station, parameter, unit, avg, dateini, hours):
         self.data['CONCENTRATION'].extend(yhat)
@@ -178,14 +179,20 @@ class CsvWriter:
         self.data['HOUR'].extend([d.hour for d in dates])
         lon = self.template[self.template['STATION'] == station]['LON'].values[0]
         lat = self.template[self.template['STATION'] == station]['LAT'].values[0]
+        alt = self.template[self.template['STATION'] == station]['ALT'].values[0]
         self.data['LON'].extend([lon for i in yhat])
         self.data['LAT'].extend([lat for i in yhat])
+        self.data['ALT'].extend([alt for i in yhat])
 
     def daterange(self, start_date, hour, n):
         delta = timedelta(hours=hour)
+        dates = []
         for i in range(n):
-            yield start_date
+            dates.append(start_date)
             start_date += delta
+        return dates
 
     def write_observation(self, path):
-        pd.DataFrame.from_dict(self.data).to_csv(path, index=False)
+        for key, value in self.data.items():
+            print(key, '->', len(value))
+        pd.DataFrame.from_dict(self.data).to_csv(path,columns=list(self.template.columns), index=False)
