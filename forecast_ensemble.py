@@ -19,9 +19,6 @@ import json
 import sys
 import tensorflow as tf
 
-param = int(sys.argv[1])
-print(param)
-# Comment to run with GPU o Select CPU
 
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
 for physical_device in physical_devices:
@@ -54,17 +51,11 @@ ensembles_pm25 = dataM.generate_ensambles(data_pm25,2.4,n_size)
 ensembles_t = dataM.generate_ensambles(data_t,0.5,n_size)
 ensembles_w = dataM.generate_ensambles(data_w,0.05,n_size)
 
-mls_label = [ 'CnnMeteo_d',
-    'CnvLstmMeteo',
-    'CnvLstmMeteo_r_d'
-]
+
 
 file_name="m_Weeks_" +str(semana)+"_hidden_"+str(n_LSTM_hidden_layers)+"_cells_"+str(n_cells)+"_"+ mls_label[param] + ".h5"
 titulo=mls_label[param] +str(semana)+"_hidden_"+str(n_LSTM_hidden_layers)+"_cells_"+str(n_cells)
-mls = [ CnnMeteo(n_input_steps, n_features, n_output_steps, drop=True,n_LSTM_hidden_layers=n_LSTM_hidden_layers,n_cells=n_cells),
-		 CnvLstmMeteo(n_input_steps, n_features, n_output_steps, reg=False, drop=False,n_LSTM_hidden_layers=n_LSTM_hidden_layers,n_cells=n_cells),
-    	 CnvLstmMeteo(n_input_steps, n_features, n_output_steps, reg=True, drop=True,n_LSTM_hidden_layers=n_LSTM_hidden_layers,n_cells=n_cells),
-						 ]
+mls =  CnnMeteo(n_input_steps, n_features, n_output_steps, drop=True,n_LSTM_hidden_layers=n_LSTM_hidden_layers,n_cells=n_cells)  
 mls[param].load(file_name)
 
 n_output_steps = 24 * 3
@@ -81,7 +72,7 @@ for i in range(n_size):
     n_train = 9500
     n_features = X.shape[2]
     for j in range(days_forecast):
-        y_real = y[n_train + j*24, :]
+        y_real = y[n_train+1 + j*24, :]
         y_real = y_real.reshape((1, y_real.shape[0]))
         scalerC = pre_processor.scalers[2]
         y_real = scalerC.inverse_transform(y_real)

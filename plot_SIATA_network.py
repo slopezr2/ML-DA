@@ -50,7 +50,7 @@ stations_Meteo=np.array(stations['Meteo'].values).astype('str')
 
 mls =  CnnMeteo(n_input_steps, n_features, n_output_steps, drop=True,n_LSTM_hidden_layers=n_LSTM_hidden_layers,n_cells=n_cells)  
 for station in range(len(stations_SIATA)):
-
+#for station in range(1):
     print(stations_SIATA[station])
     station_pm25 = dataM.get_pm25(stations_SIATA[station])
     station_t = dataM.get_temperature(stations_Meteo[station])
@@ -64,7 +64,7 @@ for station in range(len(stations_SIATA)):
                                          station_pm25.CONCENTRATION.values,station_t.Date.dt.dayofweek.values,station_t.Date.dt.hour.values , station_pm25.CONCENTRATION.values)
             
     # Create Model
-    n_train = 9500
+    n_train = 9500+527
     n_features = X.shape[2]
             
     dates=(station_pm25.Date.values)
@@ -73,7 +73,7 @@ for station in range(len(stations_SIATA)):
     file_name="./models/Station"+stations_SIATA[station]+".h5"    
     mls.load(file_name)
     for j in range(days_forecast):
-        y_real = y[n_train + j*24, :]
+        y_real = y[n_train+ 1 + j*24, :]
         y_real = y_real.reshape((1, y_real.shape[0]))
         scalerC = pre_processor.scalers[2]
         y_real = scalerC.inverse_transform(y_real)
@@ -93,4 +93,4 @@ for station in range(len(stations_SIATA)):
         print('Test Score ' + "Station"+stations_SIATA[station] + ': %.2f RMSE' % (testScore))
         yreal_moving_average=pd.Series(y_real[0,:]).rolling(window=window_moving_average,min_periods=1,center=False).mean().values				    
         x_prev_moving_average=pd.Series(x_prev[0,:]).rolling(window=window_moving_average,min_periods=1,center=False).mean().values				    
-        mls.plot_forecast(datesx[n_train+j*24,:],x_prev_moving_average,datesy[n_train+j*24],yhat[0,:],yreal_moving_average,("Station"+stations_SIATA[station] + ': %.2f RMSE' % (testScore) +' Forecast day %.1i' % (j+1) ),save=True)
+        mls.plot_forecast(datesx[n_train+j*24,:],x_prev_moving_average,datesy[n_train+j*24],yhat[0,:],yreal_moving_average,("Station"+stations_SIATA[station] +'_day_%.1i' % (j+1) ),save=True)

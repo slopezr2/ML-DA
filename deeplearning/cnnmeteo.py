@@ -43,25 +43,27 @@ class Regularized_ML:
         self.model=load_model(file)
         
     def plot_forecast(self,datesx,x_prev,datesy,yhat,y_real,title,save=False):
-        myFmt = mdates.DateFormatter('%d')
-        
+      
+        dates=np.concatenate((datesx,datesy))
         plt.figure(figsize=(30,15))
-        plt.plot(datesx,x_prev,'b',linewidth=2,label='Input Data')
-        plt.plot(datesy,yhat,'g',linewidth=2,label='Prediction')
-        plt.plot(datesy,y_real,'r*-',linewidth=1,markersize=5,label='Real Data')
-        plt.xticks(fontsize=16)
+        plt.plot(datesx,x_prev,'b',linewidth=4,label='Input Data')
+        plt.plot(datesy,yhat,'g',linewidth=4,label='Prediction')
+        plt.plot(datesy,y_real,'r*-',linewidth=3,markersize=10,label='Real Data')
+        plt.rcParams['text.usetex'] = True
         plt.yticks(fontsize=30)
+        plt.ylabel('PM$_{2.5}$ Concentration [$\mu$g/m$^3$]',fontsize=45)
         plt.grid(axis='x')
-        plt.legend(fontsize=20)
-        plt.title(title,fontsize=30)
+        plt.legend(fontsize=35)
+        #plt.title(title,fontsize=30)
         ax = plt.gca()
-        xmin, xmax = ax.get_xlim()
-        custom_ticks = np.linspace(xmin, xmax, 10, dtype=int)
+        just_day=lambda t: t[6:10]
+        just_days=np.array([just_day(t) for t in dates])
+        custom_ticks = np.arange(5, 408, 24)
         ax.set_xticks(custom_ticks)
-#        ax.xaxis.set_major_formatter(myFmt)
+        ax.set_xticklabels(just_days[custom_ticks],fontsize=35)
         plt.tight_layout()
         if save :
-            plt.savefig("./figures/"+title+'.png')
+            plt.savefig("./figures/"+title+".eps",format="eps")
         plt.show()
         
             
@@ -151,19 +153,23 @@ class CnvLstmMeteo:
         self.model=load_model(file)
         
     def plot_forecast(self,datesx,x_prev,datesy,yhat,y_real,title,save=False):
+        dates=np.concatenate((datesx,datesy))
         plt.figure(figsize=(30,15))
         plt.plot(datesx,x_prev,'b',linewidth=2,label='Input Data')
         plt.plot(datesy,yhat,'g',linewidth=2,label='Prediction')
         plt.plot(datesy,y_real,'r*-',linewidth=1,markersize=5,label='Real Data')
         plt.xticks(fontsize=16)
         plt.yticks(fontsize=30)
+        plt.ylabel('PM$_{2.5}$ Concentration [$\mu$g/$m^3$]',fontsize=45,usetex=True)
         plt.grid(axis='x')
-        plt.legend(fontsize=20)
-        plt.title(title,fontsize=30)
+        plt.legend(fontsize=30)
+        #plt.title(title,fontsize=30)
         ax = plt.gca()
-        xmin, xmax = ax.get_xlim()
-        custom_ticks = np.linspace(xmin, xmax, 10, dtype=int)
+        just_day=lambda t: t[6:10]
+        just_days=np.array([just_day(t) for t in dates])
+        custom_ticks = np.arange(5, 408, 24)
         ax.set_xticks(custom_ticks)
+        ax.set_xticklabels(just_days[custom_ticks],fontsize=30)
         plt.tight_layout()
         if save :
             plt.savefig("./figures/"+title+'.png')

@@ -12,7 +12,7 @@ stations_Meteo=np.array(stations['Meteo'].values).astype('str')
 #graph_type. If it is complete, Graph all data
 #If it is period, graph data for simulation period
 
-graph_type="complete"
+graph_type="period"
 
 
 
@@ -71,27 +71,33 @@ for station in range(len(stations_SIATA)):
         pm25 = pm25.reshape((1, pm25.shape[0]))
         pm25=scalerC.inverse_transform(pm25)
         
-        
+        plt.figure(dpi=1200)
         plt.plot(datesx[n_train,:],temperature[0,:])
         ax = plt.gca()
-        xmin, xmax = ax.get_xlim()
-        custom_ticks = np.linspace(xmin, xmax, 5, dtype=int)
+        just_day=lambda t: t[6:10]
+        just_days=np.array([just_day(t) for t in datesx[n_train,:]])
+        custom_ticks = np.arange(5, 336, 48)
         ax.set_xticks(custom_ticks)
+        ax.set_xticklabels(just_days[custom_ticks])
         plt.title("Temperature Station " + stations_Meteo[station]+" Shape "+str(station_t.shape))
         plt.show()
-        plt.Figure()
+        plt.figure(dpi=1200)
         plt.plot(datesx[n_train,:],wind[0,:])
         ax = plt.gca()
-        xmin, xmax = ax.get_xlim()
-        custom_ticks = np.linspace(xmin, xmax, 5, dtype=int)
+        just_day=lambda t: t[6:10]
+        just_days=np.array([just_day(t) for t in datesx[n_train,:]])
+        custom_ticks = np.arange(5, 336, 48)
         ax.set_xticks(custom_ticks)
+        ax.set_xticklabels(just_days[custom_ticks])
         plt.title("Wind Station " + stations_Meteo[station]+" Shape "+str(station_t.shape))
         plt.show()
-        plt.Figure()
+        plt.figure(dpi=1200)
         plt.plot(datesx[n_train,:],pm25[0,:])
         ax = plt.gca()
-        xmin, xmax = ax.get_xlim()
-        custom_ticks = np.linspace(xmin, xmax, 5, dtype=int)
+        just_day=lambda t: t[6:10]
+        just_days=np.array([just_day(t) for t in datesx[n_train,:]])
+        custom_ticks = np.arange(5, 336, 48)
         ax.set_xticks(custom_ticks)
+        ax.set_xticklabels(just_days[custom_ticks])
         plt.title("PM25 Station " + stations_SIATA[station]+" Shape "+str(station_pm25.shape))
         plt.show()
