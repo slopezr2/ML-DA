@@ -15,14 +15,16 @@ warnings.filterwarnings('ignore')
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
-# Parameters to select the LSTM architecture
-
+# Parameters to select the LSTM architecture 
 semana = 2
 n_LSTM_hidden_layers = 2
 n_cells = 200
 n_features = 5
 # Value to graph a moving average of observations. Just for graphical purposes
 window_moving_average = 5
+# Correction of time zone (LOTOS-EUROS time zone is UTC-0, Colombia is UTC-5)
+UTC=5
+
 
 days_forecast = 1
 dataM = DataManager(path="data/", filter_items=["pm25", "temperature", "wind"])
@@ -59,7 +61,7 @@ for j in range(days_forecast):
                                      station_t.Date.dt.hour.values, station_pm25.CONCENTRATION.values)
     
         # Create Model
-        n_train = 9500+527+5
+        n_train = 9500+527
     
     
         n_features = X.shape[2]
@@ -80,14 +82,14 @@ for j in range(days_forecast):
         yhat = scalerC.inverse_transform(yhat)
         station_str = str(stations_SIATA[station])
         ns = 1e-9
-        date_ini_1 = datetime.strptime(datesy[n_train,1],'%Y-%m-%d %H:%M:%S')
-        date_ini_2 = datetime.strptime(datesy[n_train,1+24],'%Y-%m-%d %H:%M:%S')
-        date_ini_3 = datetime.strptime(datesy[n_train,1+48],'%Y-%m-%d %H:%M:%S')
+        date_ini_1 = datetime.strptime(datesy[n_train+UTC,1],'%Y-%m-%d %H:%M:%S')
+        date_ini_2 = datetime.strptime(datesy[n_train+UTC,1+24],'%Y-%m-%d %H:%M:%S')
+        date_ini_3 = datetime.strptime(datesy[n_train+UTC,1+48],'%Y-%m-%d %H:%M:%S')
         hours = 1
         csv_writer_1.add(yhat[0,0:24],'Station'+station_str,'pm5','ug/m3',1,date_ini_1,hours)
         csv_writer_2.add(yhat[0,24:48],'Station'+station_str,'pm5','ug/m3',1,date_ini_2,hours)
         csv_writer_3.add(yhat[0,48:72],'Station'+station_str,'pm5','ug/m3',1,date_ini_3,hours)
 
-    csv_writer_1.write_observation('observations/output/Observaciones_SIATA_tpm25_2019'+datesy[n_train,1][5:7]+datesy[n_train,1][8:10]+'.csv')
-    csv_writer_2.write_observation('observations/output/Observaciones_SIATA_tpm25_2019'+datesy[n_train,1+24][5:7]+datesy[n_train,1+24][8:10]+'.csv')
-    csv_writer_3.write_observation('observations/output/Observaciones_SIATA_tpm25_2019'+datesy[n_train,1+48][5:7]+datesy[n_train,1+48][8:10]+'.csv')
+    csv_writer_1.write_observation('observations/output/Observaciones_SIATA_tpm25_2019'+datesy[n_train+UTC,1][5:7]+datesy[n_train,1][8:10]+'.csv')
+    csv_writer_2.write_observation('observations/output/Observaciones_SIATA_tpm25_2019'+datesy[n_train+UTC,1+24][5:7]+datesy[n_train,1+24][8:10]+'.csv')
+    csv_writer_3.write_observation('observations/output/Observaciones_SIATA_tpm25_2019'+datesy[n_train+UTC,1+48][5:7]+datesy[n_train,1+48][8:10]+'.csv')
