@@ -86,9 +86,9 @@ for j in range(days_forecast):
         date_ini_2 = datetime.strptime(datesy[n_train+UTC,1+24],'%Y-%m-%d %H:%M:%S')
         date_ini_3 = datetime.strptime(datesy[n_train+UTC,1+48],'%Y-%m-%d %H:%M:%S')
         hours = 1
-        csv_writer_1.add(yhat[0,0:24],'Station'+station_str,'pm5','ug/m3',1,date_ini_1,hours)
-        csv_writer_2.add(yhat[0,24:48],'Station'+station_str,'pm5','ug/m3',1,date_ini_2,hours)
-        csv_writer_3.add(yhat[0,48:72],'Station'+station_str,'pm5','ug/m3',1,date_ini_3,hours)
+        csv_writer_1.add(yhat[0,0:24],'Station'+station_str,'pm25','ug/m3',1,date_ini_1,hours)
+        csv_writer_2.add(yhat[0,24:48],'Station'+station_str,'pm25','ug/m3',1,date_ini_2,hours)
+        csv_writer_3.add(yhat[0,48:72],'Station'+station_str,'pm25','ug/m3',1,date_ini_3,hours)
 
     csv_writer_1.write_observation('observations/output/Observaciones_SIATA_tpm25_2019'+datesy[n_train+UTC,1+24][5:7]+datesy[n_train,1+24][8:10]+'.csv')
     csv_writer_2.write_observation('observations/output/Observaciones_SIATA_tpm25_2019'+datesy[n_train+UTC,1+48][5:7]+datesy[n_train,1+48][8:10]+'.csv')

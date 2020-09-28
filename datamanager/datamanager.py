@@ -163,7 +163,7 @@ class CsvWriter:
         #              'HOUR': [], 'PARAMETER':[], 'UNITS':[], 'AVERAGING_PERIOD':[], 'ALT':[]}
 
         template = 'observations/templates/Observaciones_SIATA_tpm25_20190101.csv'
-        self.template = pd.read_csv(template)
+        self.template = pd.read_csv(template,delimiter=';')
         self.data = {name: [] for name in list(self.template.columns)}
 
     def add(self, yhat, station, parameter, unit, avg, dateini, hours):
@@ -195,4 +195,4 @@ class CsvWriter:
     def write_observation(self, path):
         for key, value in self.data.items():
             print(key, '->', len(value))
-        pd.DataFrame.from_dict(self.data).to_csv(path,columns=list(self.template.columns), index=False)
+        pd.DataFrame.from_dict(self.data).to_csv(path,columns=list(self.template.columns), index=False,sep=';')
