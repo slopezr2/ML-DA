@@ -48,6 +48,7 @@ for i in range(len(names_stations)):
     plt.plot(date_DA_ML_2[48:],pd.Series(Xa_PM25_ML_2[48:len(date_DA_ML_2),0,i]).rolling(window=window_moving_average,min_periods=1,center=False).mean().values,'k',linewidth=4,markersize=10,label='LE-DA')
     plt.plot(date_FC_ML_2,pd.Series(Xa_PM25_ML_2[len(date_DA_ML_2):,0,i]).rolling(window=window_moving_average,min_periods=1,center=False).mean().values,'g',linewidth=4,markersize=10,label='LE-ML')
     plt.plot(date_FC_ML_2[:-1],pd.Series(Xa_PM25_FC_2[:,0,i]).rolling(window=window_moving_average,min_periods=1,center=False).mean().values,'b',linewidth=4,markersize=10,label='LE-FC')
+    plt.axvline(date_FC_ML_2[0],linewidth=3,linestyle='--',color=[0.3,0.3,0.3])
     ax = plt.gca()
     plt.rcParams['text.usetex'] = True
     plt.yticks(fontsize=30)
