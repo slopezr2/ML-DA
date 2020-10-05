@@ -36,7 +36,7 @@ n_features=5
 window_moving_average=5
 
 
-days_forecast=3
+days_forecast=1
 dataM = DataManager(path="data/", filter_items=["pm25", "temperature", "wind"])
 
 
@@ -49,6 +49,7 @@ stations_SIATA=np.array(stations['PM25'].values).astype('str')
 stations_Meteo=np.array(stations['Meteo'].values).astype('str')
 
 mls =  CnnMeteo(n_input_steps, n_features, n_output_steps, drop=True,n_LSTM_hidden_layers=n_LSTM_hidden_layers,n_cells=n_cells)  
+RMSE_LSTM_ML_2={}
 for station in range(len(stations_SIATA)):
 #for station in range(1):
     print(stations_SIATA[station])
@@ -94,3 +95,4 @@ for station in range(len(stations_SIATA)):
         yreal_moving_average=pd.Series(y_real[0,:]).rolling(window=window_moving_average,min_periods=1,center=False).mean().values				    
         x_prev_moving_average=pd.Series(x_prev[0,:]).rolling(window=window_moving_average,min_periods=1,center=False).mean().values				    
         mls.plot_forecast(datesx[n_train+j*24,:],x_prev_moving_average,datesy[n_train+j*24],yhat[0,:],yreal_moving_average,("Station"+stations_SIATA[station] +'_day_%.1i' % (j+1) ),save=True)
+        RMSE_LSTM_ML_2[stations_SIATA[station]]=testScore

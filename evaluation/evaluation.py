@@ -59,24 +59,24 @@ class Evaluator:
         self.RMSE_ML['Stations']=[]
         self.PC_ML['Stations']=[]
         evaluated_stations=0
-        RMSE_ML_sum_DA=0
-        PC_ML_sum_DA=0
-        RMSE_ML_sum_total=0
-        RMSE_FC_sum_total=0
-        PC_ML_sum_total=0
-        PC_FC_sum_total=0
-        RMSE_ML_sum_day1=0
-        RMSE_FC_sum_day1=0
-        PC_ML_sum_day1=0
-        PC_FC_sum_day1=0
-        RMSE_ML_sum_day2=0
-        RMSE_FC_sum_day2=0
-        PC_ML_sum_day2=0
-        PC_FC_sum_day2=0
-        RMSE_ML_sum_day3=0
-        RMSE_FC_sum_day3=0
-        PC_ML_sum_day3=0
-        PC_FC_sum_day3=0
+        RMSE_ML_sum_DA=[]
+        PC_ML_sum_DA=[]
+        RMSE_ML_sum_total=[]
+        RMSE_FC_sum_total=[]
+        PC_ML_sum_total=[]
+        PC_FC_sum_total=[]
+        RMSE_ML_sum_day1=[]
+        RMSE_FC_sum_day1=[]
+        PC_ML_sum_day1=[]
+        PC_FC_sum_day1=[]
+        RMSE_ML_sum_day2=[]
+        RMSE_FC_sum_day2=[]
+        PC_ML_sum_day2=[]
+        PC_FC_sum_day2=[]
+        RMSE_ML_sum_day3=[]
+        RMSE_FC_sum_day3=[]
+        PC_ML_sum_day3=[]
+        PC_FC_sum_day3=[]
         for i in range(len(self.names_stations)):
             if np.sum(np.isnan(self.Y_PM25[:,0,i]))>100:
                 continue
@@ -124,51 +124,51 @@ class Evaluator:
             self.RMSE_ML[name_station+'_total']['DA']=sqrt(mean_squared_error(Y_real[nan_index][-72:-1],Y_DA[nan_index][-72:-1]))
             self.PC_ML[name_station+'_total']['DA']=pearsonr(Y_real[nan_index][-72:-1],Y_DA[nan_index][-72:-1])[0]
             #===Sum for total across the stations====
-            RMSE_ML_sum_total=self.RMSE_ML[name_station+'_total']['ML']+RMSE_ML_sum_total
-            RMSE_FC_sum_total=self.RMSE_ML[name_station+'_total']['FC']+RMSE_FC_sum_total
-            PC_ML_sum_total=self.PC_ML[name_station+'_total']['ML']+PC_ML_sum_total
-            PC_FC_sum_total=self.PC_ML[name_station+'_total']['FC']+PC_FC_sum_total
-            RMSE_ML_sum_day1=self.RMSE_ML[name_station+'_day1']['ML']+RMSE_ML_sum_day1
-            RMSE_FC_sum_day1=self.RMSE_ML[name_station+'_day1']['FC']+RMSE_FC_sum_day1
-            PC_ML_sum_day1=self.PC_ML[name_station+'_day1']['ML']+PC_ML_sum_day1
-            PC_FC_sum_day1=self.PC_ML[name_station+'_day1']['FC']+PC_FC_sum_day1
-            RMSE_ML_sum_day2=self.RMSE_ML[name_station+'_day2']['ML']+RMSE_ML_sum_day2
-            RMSE_FC_sum_day2=self.RMSE_ML[name_station+'_day2']['FC']+RMSE_FC_sum_day2
-            PC_ML_sum_day2=self.PC_ML[name_station+'_day2']['ML']+PC_ML_sum_day2
-            PC_FC_sum_day2=self.PC_ML[name_station+'_day2']['FC']+PC_FC_sum_day2
-            RMSE_ML_sum_day3=self.RMSE_ML[name_station+'_day3']['ML']+RMSE_ML_sum_day3
-            RMSE_FC_sum_day3=self.RMSE_ML[name_station+'_day3']['FC']+RMSE_FC_sum_day3
-            PC_ML_sum_day3=self.PC_ML[name_station+'_day3']['ML']+PC_ML_sum_day3
-            PC_FC_sum_day3=self.PC_ML[name_station+'_day3']['FC']+PC_FC_sum_day3
-            RMSE_ML_sum_DA=self.RMSE_ML[name_station+'_total']['DA']+RMSE_ML_sum_DA
-            PC_ML_sum_DA=self.PC_ML[name_station+'_total']['DA']+PC_ML_sum_DA
+            RMSE_ML_sum_total.append(self.RMSE_ML[name_station+'_total']['ML'])
+            RMSE_FC_sum_total.append(self.RMSE_ML[name_station+'_total']['FC'])
+            PC_ML_sum_total.append(self.PC_ML[name_station+'_total']['ML'])
+            PC_FC_sum_total.append(self.PC_ML[name_station+'_total']['FC'])
+            RMSE_ML_sum_day1.append(self.RMSE_ML[name_station+'_day1']['ML'])
+            RMSE_FC_sum_day1.append(self.RMSE_ML[name_station+'_day1']['FC'])
+            PC_ML_sum_day1.append(self.PC_ML[name_station+'_day1']['ML'])
+            PC_FC_sum_day1.append(self.PC_ML[name_station+'_day1']['FC'])
+            RMSE_ML_sum_day2.append(self.RMSE_ML[name_station+'_day2']['ML'])
+            RMSE_FC_sum_day2.append(self.RMSE_ML[name_station+'_day2']['FC'])
+            PC_ML_sum_day2.append(self.PC_ML[name_station+'_day2']['ML'])
+            PC_FC_sum_day2.append(self.PC_ML[name_station+'_day2']['FC'])
+            RMSE_ML_sum_day3.append(self.RMSE_ML[name_station+'_day3']['ML'])
+            RMSE_FC_sum_day3.append(self.RMSE_ML[name_station+'_day3']['FC'])
+            PC_ML_sum_day3.append(self.PC_ML[name_station+'_day3']['ML'])
+            PC_FC_sum_day3.append(self.PC_ML[name_station+'_day3']['FC'])
+            RMSE_ML_sum_DA.append(self.RMSE_ML[name_station+'_total']['DA'])
+            PC_ML_sum_DA.append(self.PC_ML[name_station+'_total']['DA'])
             
         self.RMSE_ML['Total']={}
-        self.RMSE_ML['Total']['ML']=RMSE_ML_sum_total/evaluated_stations
-        self.RMSE_ML['Total']['FC']=RMSE_FC_sum_total/evaluated_stations
-        self.RMSE_ML['Total']['DA']=RMSE_ML_sum_DA/evaluated_stations
+        self.RMSE_ML['Total']['ML']=np.median(RMSE_ML_sum_total)
+        self.RMSE_ML['Total']['FC']=np.median(RMSE_FC_sum_total)
+        self.RMSE_ML['Total']['DA']=np.median(RMSE_ML_sum_DA)
         self.PC_ML['Total']={}
-        self.PC_ML['Total']['ML']=PC_ML_sum_total/evaluated_stations
-        self.PC_ML['Total']['FC']=PC_FC_sum_total/evaluated_stations
-        self.PC_ML['Total']['DA']=PC_ML_sum_DA/evaluated_stations
+        self.PC_ML['Total']['ML']=np.median(PC_ML_sum_total)
+        self.PC_ML['Total']['FC']=np.median(PC_FC_sum_total)
+        self.PC_ML['Total']['DA']=np.median(PC_ML_sum_DA)
         self.RMSE_ML['day1']={}
-        self.RMSE_ML['day1']['ML']=RMSE_ML_sum_day1/evaluated_stations
-        self.RMSE_ML['day1']['FC']=RMSE_FC_sum_day1/evaluated_stations
+        self.RMSE_ML['day1']['ML']=np.median(RMSE_ML_sum_day1)
+        self.RMSE_ML['day1']['FC']=np.median(RMSE_FC_sum_day1)
         self.PC_ML['day1']={}
-        self.PC_ML['day1']['ML']=PC_ML_sum_day1/evaluated_stations
-        self.PC_ML['day1']['FC']=PC_FC_sum_day1/evaluated_stations
+        self.PC_ML['day1']['ML']=np.median(PC_ML_sum_day1)
+        self.PC_ML['day1']['FC']=np.median(PC_FC_sum_day1)
         self.RMSE_ML['day2']={}
-        self.RMSE_ML['day2']['ML']=RMSE_ML_sum_day2/evaluated_stations
-        self.RMSE_ML['day2']['FC']=RMSE_FC_sum_day2/evaluated_stations
+        self.RMSE_ML['day2']['ML']=np.median(RMSE_ML_sum_day2)
+        self.RMSE_ML['day2']['FC']=np.median(RMSE_FC_sum_day2)
         self.PC_ML['day2']={}
-        self.PC_ML['day2']['ML']=PC_ML_sum_day2/evaluated_stations
-        self.PC_ML['day2']['FC']=PC_FC_sum_day2/evaluated_stations
+        self.PC_ML['day2']['ML']=np.median(PC_ML_sum_day2)
+        self.PC_ML['day2']['FC']=np.median(PC_FC_sum_day2)
         self.RMSE_ML['day3']={}
-        self.RMSE_ML['day3']['ML']=RMSE_ML_sum_day3/evaluated_stations
-        self.RMSE_ML['day3']['FC']=RMSE_FC_sum_day3/evaluated_stations
+        self.RMSE_ML['day3']['ML']=np.median(RMSE_ML_sum_day3)
+        self.RMSE_ML['day3']['FC']=np.median(RMSE_FC_sum_day3)
         self.PC_ML['day3']={}
-        self.PC_ML['day3']['ML']=PC_ML_sum_day3/evaluated_stations
-        self.PC_ML['day3']['FC']=PC_FC_sum_day3/evaluated_stations
+        self.PC_ML['day3']['ML']=np.median(PC_ML_sum_day3)
+        self.PC_ML['day3']['FC']=np.median(PC_FC_sum_day3)
     
     def graph(self,save=False):
         for i in range(len(self.names_stations)):
@@ -186,7 +186,7 @@ class Evaluator:
             plt.plot(self.date_DA_ML[24*self.ML:],pd.Series(self.Xa_PM25_ML[24*self.ML:len(self.date_DA_ML),0,i]).rolling(window=self.window_moving_average,min_periods=1,center=False).mean().values,'k',linewidth=4,markersize=10,label='LE-DA')
             plt.plot(self.date_FC_ML[:-1],pd.Series(self.Xa_PM25_FC[:,0,i]).rolling(window=self.window_moving_average,min_periods=1,center=False).mean().values,'b',linewidth=4,markersize=10,label='LE-FC')
             plt.plot(self.date_FC_ML,pd.Series(self.Xa_PM25_ML[len(self.date_DA_ML):,0,i]).rolling(window=self.window_moving_average,min_periods=1,center=False).mean().values,'g',linewidth=4,markersize=10,label='LE-ML')
-            plt.plot(self.date_Y[24*self.ML:],pd.Series(self.Xb_PM25_ML[24*self.ML:,0,i]).rolling(window=self.window_moving_average,min_periods=1,center=False).mean().values,'k--',linewidth=3,markersize=10,label='LE')
+            #plt.plot(self.date_Y[24*self.ML:],pd.Series(self.Xb_PM25_ML[24*self.ML:,0,i]).rolling(window=self.window_moving_average,min_periods=1,center=False).mean().values,'k--',linewidth=3,markersize=10,label='LE')
             plt.axvline(self.date_FC_ML[0],linewidth=3,linestyle='--',color=[0.3,0.3,0.3])
             ax = plt.gca()
             plt.rcParams['text.usetex'] = True

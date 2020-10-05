@@ -145,3 +145,4 @@ for station in range(len(stations_SIATA)):
                   color = 'blue',label='PDF SIATA observations' ,
                  kde_kws={'linewidth': 4})
     plt.legend(fontsize=20)
+    plt.savefig("./figures/Ensemble_Station"+stations_SIATA[station]+".png")
